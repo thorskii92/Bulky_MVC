@@ -4,8 +4,9 @@ using BulkyBook.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace BulkyBookWeb.Controllers
+namespace BulkyBookWeb.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -26,16 +27,16 @@ namespace BulkyBookWeb.Controllers
         [HttpPost]
         public IActionResult Create(Category obj)
         {
-            if (obj.Name == obj.DisplayOrder.ToString()) 
+            if (obj.Name == obj.DisplayOrder.ToString())
             {
                 ModelState.AddModelError("name", "The Display Order cannot exactly match the Category Name.");
             }
-          
+
             if (ModelState.IsValid)
             {
                 _unitOfWork.Category.Add(obj);
                 _unitOfWork.Save();
-                TempData["success"] = "Category created Successfully";  
+                TempData["success"] = "Category created Successfully";
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -43,11 +44,11 @@ namespace BulkyBookWeb.Controllers
 
         public IActionResult Edit(int? id)
         {
-            if (id == null || id == 0) 
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-            Category? categoryFromDb = _unitOfWork.Category.Get(u=>u.Id==id);
+            Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Id == id);
             //Category? categoryFromDb1 = _db.Categories.FirstOrDefault(u=>u.Id==id);
             //Category? categoryFromDb2 = _db.Categories.Where(u=>u.Id==id).FirstOrDefault();
             if (categoryFromDb == null)
@@ -93,7 +94,7 @@ namespace BulkyBookWeb.Controllers
                 return NotFound();
             }
             _unitOfWork.Category.Remove(obj);
-            _unitOfWork.Save();   
+            _unitOfWork.Save();
             TempData["success"] = "Category deleted Successfully";
             return RedirectToAction("Index");
         }
